@@ -205,6 +205,38 @@ def visualise_monthly_total_runs(df):
     plt.show()
 
 
+def visualise_weekly_total_runs(df):
+    """
+    Visualise the total number of runs for each week in 2024.
+    """
+    # extract the week number from 'start_date' and create a new column
+    df["week"] = df["start_date"].dt.isocalendar().week
+
+    # group data by week and count the number of runs
+    weekly_run_counts = df.groupby("week").size()
+
+    # create a new figure for the line chart
+    fig = plt.figure(figsize=(12, 6))
+    plt.plot(
+        weekly_run_counts.index,
+        weekly_run_counts.values,
+        marker="o",
+        linestyle="-",
+        color="#2ca02c",
+    )
+
+    # add labels and title for the chart
+    plt.xlabel("Week Number")
+    plt.ylabel("Number of Runs")
+    plt.title("Total Number of Runs per Week in 2024")
+    plt.xticks(weekly_run_counts.index, rotation=45)
+    plt.grid(axis="both", linestyle="--", alpha=0.7)
+
+    # save the plot as a PNG file
+    save_plot(fig, "weekly_total_runs.png")
+    plt.show()
+
+
 def main():
     file_path = "data/apple_health_workout_running_data.csv"
 
@@ -223,10 +255,11 @@ def main():
     average_distance = calculate_average_run_distance(df_2024)
     print(f"Average Distance per Run in 2024: {average_distance:.2f} km")
 
-    # visualize the charts and save them as images
+    # visualise the charts and save them as images
     visualise_average_run_distance(average_distance)
     visualise_monthly_total_distances(df_2024)
     visualise_monthly_total_runs(df_2024)
+    visualise_weekly_total_runs(df_2024)
 
 
 if __name__ == "__main__":
