@@ -1,0 +1,6 @@
+# pedantry
+ruff==0.7.4
+
+# data analysis/visualisation
+matplotlib==3.9.2
+pandas==2.2.3
