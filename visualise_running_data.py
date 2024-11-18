@@ -85,7 +85,7 @@ def visualise_average_run_distance(average_distance):
     plt.ylim(0, average_distance + 1)
 
     # save the plot as a PNG file
-    save_plot(fig, "average_run_distance.png")
+    save_plot(fig, "average_run_distance_2024.png")
     plt.show()
 
 
@@ -143,7 +143,7 @@ def visualise_monthly_total_distances(df):
         )
 
     # save the plot as a PNG file
-    save_plot(fig, "monthly_total_distances.png")
+    save_plot(fig, "monthly_total_distances_2024.png")
     plt.show()
 
 
@@ -201,7 +201,7 @@ def visualise_monthly_total_runs(df):
         )
 
     # save the plot as a PNG file
-    save_plot(fig, "monthly_total_runs.png")
+    save_plot(fig, "monthly_total_runs_2024.png")
     plt.show()
 
 
@@ -233,7 +233,7 @@ def visualise_weekly_total_runs(df):
     plt.grid(axis="both", linestyle="--", alpha=0.7)
 
     # save the plot as a PNG file
-    save_plot(fig, "weekly_total_runs.png")
+    save_plot(fig, "weekly_total_runs_2024.png")
     plt.show()
 
 
