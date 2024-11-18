@@ -1,9 +1,9 @@
-# PyPI
+import os
 import pandas as pd
 import matplotlib.pyplot as plt
 
 
-def load_data(file_path):
+def load_running_data(file_path):
     """
     Load the running data CSV file.
     """
@@ -12,23 +12,21 @@ def load_data(file_path):
         df = pd.read_csv(file_path)
         return df
     except FileNotFoundError:
-        # handle the case where the file path is incorrect or the file is missing
         print(f"File not found: {file_path}")
         return None
 
 
-def preprocess_data(df):
+def preprocess_running_data(df):
     """
     Preprocess the data to filter for 2024 runs and convert distances to numeric values.
     """
-    # convert 'start_date' column to datetime format to make filtering by year easier
+    # convert 'start_date' column to datetime format to handle dates
     df["start_date"] = pd.to_datetime(df["start_date"], errors="coerce")
 
-    # filter the data to only include runs from the year 2024
+    # filter the DataFrame to include only rows where the year is 2024
     df_2024 = df[df["start_date"].dt.year == 2024]
 
-    # convert 'distance' from string format (e.g., "5.00km") to a numeric float value
-    # this will make it easier to perform calculations later
+    # convert 'distance' column from string (e.g., '5.00km') to a numeric value (float)
     df_2024["distance_km"] = (
         df_2024["distance"].str.replace("km", "", regex=False).astype(float)
     )
@@ -36,21 +34,35 @@ def preprocess_data(df):
     return df_2024
 
 
-def calculate_average_distance(df):
+def calculate_average_run_distance(df):
     """
     Calculate the average distance of all runs in 2024.
     """
-    # calculate the mean (average) of the 'distance_km' column
+    # calculate the mean of the 'distance_km' column and return it
     return df["distance_km"].mean()
 
 
-def visualise_average_distance(average_distance):
+def save_plot(fig, filename):
     """
-    Visualise the average distance using a bar chart and display the value on the bar.
+    Save the current plot as a PNG file in the 'data_visualisations' directory.
     """
-    plt.figure(figsize=(6, 4))
+    # create the directory if it doesn't exist
+    os.makedirs("data_visualisations", exist_ok=True)
 
-    # plot a bar chart with the average distance
+    # save the figure with the specified filename
+    file_path = os.path.join("data_visualisations", filename)
+    fig.savefig(file_path)
+    print(f"Saved plot as: {file_path}")
+
+
+def visualise_average_run_distance(average_distance):
+    """
+    Visualise the average distance using a bar chart.
+    """
+    # create a new figure for the bar chart
+    fig = plt.figure(figsize=(6, 4))
+
+    # plot a single bar showing the average distance
     bar = plt.bar(["Average Distance"], [average_distance], color="#1f77b4")
 
     # add the exact value on top of the bar for clarity
@@ -66,34 +78,38 @@ def visualise_average_distance(average_distance):
         bbox=dict(facecolor="black", alpha=0.7, boxstyle="round,pad=0.3"),
     )
 
+    # set labels and title for the chart
     plt.ylabel("Distance (km)")
     plt.title("Average Distance per Run in 2024")
     plt.grid(axis="y", linestyle="--", alpha=0.7)
     plt.ylim(0, average_distance + 1)
+
+    # save the plot as a PNG file
+    save_plot(fig, "average_run_distance.png")
     plt.show()
 
 
-def visualise_monthly_distances(df):
+def visualise_monthly_total_distances(df):
     """
-    Visualize the total running distance for each month in 2024 with exact values.
+    Visualise the total running distance for each month in 2024.
     """
-    # extract the month from the 'start_date' and create a new column
+    # extract month from 'start_date' and create a new column
     df["month"] = df["start_date"].dt.month
 
-    # group by month and sum the distances
+    # group data by month and sum the distances
     monthly_distances = df.groupby("month")["distance_km"].sum()
 
-    # create a bar chart to visualise the monthly distances
-    plt.figure(figsize=(10, 6))
+    # create a new figure for the bar chart
+    fig = plt.figure(figsize=(10, 6))
     bars = plt.bar(monthly_distances.index, monthly_distances.values, color="#76c7c0")
 
-    # add labels and title
+    # add labels and title for the chart
     plt.xlabel("Month")
     plt.ylabel("Total Distance (km)")
     plt.title("Total Running Distance per Month in 2024")
     plt.xticks(
-        ticks=range(1, 13),
-        labels=[
+        range(1, 13),
+        [
             "Jan",
             "Feb",
             "Mar",
@@ -111,7 +127,7 @@ def visualise_monthly_distances(df):
     )
     plt.grid(axis="y", linestyle="--", alpha=0.7)
 
-    # add the exact value on top of each bar with a background box for better readability
+    # add the exact value on top of each bar
     for bar in bars:
         height = bar.get_height()
         plt.text(
@@ -126,34 +142,91 @@ def visualise_monthly_distances(df):
             bbox=dict(facecolor="black", alpha=0.7, boxstyle="round,pad=0.3"),
         )
 
-    # display the plot
+    # save the plot as a PNG file
+    save_plot(fig, "monthly_total_distances.png")
+    plt.show()
+
+
+def visualise_monthly_total_runs(df):
+    """
+    Visualise the total number of runs for each month in 2024.
+    """
+    # extract month from 'start_date' and create a new column
+    df["month"] = df["start_date"].dt.month
+
+    # group data by month and count the number of runs
+    monthly_run_counts = df.groupby("month").size()
+
+    # create a new figure for the bar chart
+    fig = plt.figure(figsize=(10, 6))
+    bars = plt.bar(monthly_run_counts.index, monthly_run_counts.values, color="#ff7f0e")
+
+    # add labels and title for the chart
+    plt.xlabel("Month")
+    plt.ylabel("Number of Runs")
+    plt.title("Total Number of Runs per Month in 2024")
+    plt.xticks(
+        range(1, 13),
+        [
+            "Jan",
+            "Feb",
+            "Mar",
+            "Apr",
+            "May",
+            "Jun",
+            "Jul",
+            "Aug",
+            "Sep",
+            "Oct",
+            "Nov",
+            "Dec",
+        ],
+        rotation=45,
+    )
+    plt.grid(axis="y", linestyle="--", alpha=0.7)
+
+    # add the exact value on top of each bar
+    for bar in bars:
+        height = bar.get_height()
+        plt.text(
+            bar.get_x() + bar.get_width() / 2,
+            height + 0.5,
+            f"{int(height)} runs",
+            ha="center",
+            va="bottom",
+            fontsize=10,
+            fontweight="bold",
+            color="white",
+            bbox=dict(facecolor="black", alpha=0.7, boxstyle="round,pad=0.3"),
+        )
+
+    # save the plot as a PNG file
+    save_plot(fig, "monthly_total_runs.png")
     plt.show()
 
 
 def main():
-    # specify the path to the CSV file
     file_path = "data/apple_health_workout_running_data.csv"
 
     # load the CSV data into a DataFrame
-    df = load_data(file_path)
+    df = load_running_data(file_path)
     if df is None:
         return
 
     # preprocess the data to filter for 2024 and convert distances
-    df_2024 = preprocess_data(df)
+    df_2024 = preprocess_running_data(df)
     if df_2024.empty:
         print("No running data available for 2024.")
         return
 
     # calculate the average distance per run for 2024
-    average_distance = calculate_average_distance(df_2024)
+    average_distance = calculate_average_run_distance(df_2024)
     print(f"Average Distance per Run in 2024: {average_distance:.2f} km")
 
-    # visualise the average distance using a bar chart
-    visualise_average_distance(average_distance)
-
-    # visualise the total running distance for each month in 2024
-    visualise_monthly_distances(df_2024)
+    # visualize the charts and save them as images
+    visualise_average_run_distance(average_distance)
+    visualise_monthly_total_distances(df_2024)
+    visualise_monthly_total_runs(df_2024)
 
 
 if __name__ == "__main__":
