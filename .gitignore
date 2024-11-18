@@ -1,0 +1,23 @@
+# ignore Python bytecode files
+__pycache__/
+*.py[cod]
+*$py.class
+
+# ignore virtual environment directory
+.venv/
+env/
+venv/
+
+# ignore macOS specific files
+.DS_Store
+.AppleDouble
+.LSOverride
+
+# ignore macOS resource forks
+._*
+
+# ignore IDE and editor config files
+.vscode/
+
+# ignore the data folder and its contents
+data/
