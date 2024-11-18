@@ -3,7 +3,7 @@
 This repository contains tools and scripts for extracting, processing, and visualising your workout data from Apple Health. It is specifically designed to analyse **running** and **cycling** workout data, helping you visualize trends and insights from your fitness journey.
 
 ## Features
-- **Data extraction**: Extract running and cycling workout data from Apple Health CSV files.
+- **Data extraction**: Extract running and cycling workout data from Apple Health **XML files** and convert them into CSV files.
 - **Data processing**: Filter and preprocess data to focus on specific years (e.g., 2024).
 - **Data visualization**: Generate insightful charts to visualise weekly and monthly trends for running distances, frequencies, and averages.
 
