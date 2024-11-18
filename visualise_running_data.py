@@ -46,7 +46,7 @@ def calculate_average_distance(df):
 
 def visualise_average_distance(average_distance):
     """
-    Visualize the average distance using a bar chart and display the value on the bar.
+    Visualise the average distance using a bar chart and display the value on the bar.
     """
     plt.figure(figsize=(6, 4))
 
@@ -75,28 +75,58 @@ def visualise_average_distance(average_distance):
 
 def visualise_monthly_distances(df):
     """
-    Visualize the total running distance for each month in 2024.
+    Visualize the total running distance for each month in 2024 with exact values.
     """
     # extract the month from the 'start_date' and create a new column
-    df['month'] = df['start_date'].dt.month
+    df["month"] = df["start_date"].dt.month
 
     # group by month and sum the distances
-    monthly_distances = df.groupby('month')['distance_km'].sum()
+    monthly_distances = df.groupby("month")["distance_km"].sum()
 
+    # create a bar chart to visualise the monthly distances
     plt.figure(figsize=(10, 6))
-    monthly_distances.plot(kind='bar', color='#76c7c0')
+    bars = plt.bar(monthly_distances.index, monthly_distances.values, color="#76c7c0")
 
     # add labels and title
-    plt.xlabel('Month')
-    plt.ylabel('Total Distance (km)')
-    plt.title('Total Running Distance per Month in 2024')
+    plt.xlabel("Month")
+    plt.ylabel("Total Distance (km)")
+    plt.title("Total Running Distance per Month in 2024")
+    plt.xticks(
+        ticks=range(1, 13),
+        labels=[
+            "Jan",
+            "Feb",
+            "Mar",
+            "Apr",
+            "May",
+            "Jun",
+            "Jul",
+            "Aug",
+            "Sep",
+            "Oct",
+            "Nov",
+            "Dec",
+        ],
+        rotation=45,
+    )
+    plt.grid(axis="y", linestyle="--", alpha=0.7)
 
-    # set custom month labels
-    plt.xticks(ticks=range(12), labels=[
-        'Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'], rotation=45)
+    # add the exact value on top of each bar with a background box for better readability
+    for bar in bars:
+        height = bar.get_height()
+        plt.text(
+            bar.get_x() + bar.get_width() / 2,
+            height + 0.5,
+            f"{height:.2f} km",
+            ha="center",
+            va="bottom",
+            fontsize=10,
+            fontweight="bold",
+            color="white",
+            bbox=dict(facecolor="black", alpha=0.7, boxstyle="round,pad=0.3"),
+        )
 
-    plt.grid(axis='y', linestyle='--', alpha=0.7)
-    plt.tight_layout()
+    # display the plot
     plt.show()
 
 
