@@ -21,3 +21,6 @@ venv/
 
 # ignore the data folder and its contents
 data/
+
+# ignore the data_visualisations folder and its contents
+data_visualisations/
