@@ -1,6 +1,7 @@
 import os
 import pandas as pd
 import matplotlib.pyplot as plt
+import matplotlib.ticker as ticker
 
 
 def load_running_data(file_path):
@@ -205,6 +206,57 @@ def visualise_monthly_total_runs(df):
     plt.show()
 
 
+def visualise_weekly_total_distances_bar(df):
+    """
+    Visualise the total running distance for each week in 2024 using a horizontal bar chart.
+    """
+    # extract the week number from 'start_date' and create a new column
+    df["week"] = df["start_date"].dt.isocalendar().week
+
+    # group data by week and sum the distances
+    weekly_distances = df.groupby("week")["distance_km"].sum()
+
+    # create a new figure for the horizontal bar chart
+    fig, ax = plt.subplots(figsize=(12, 10))
+
+    # reduce bar height for more spacing
+    bar_height = 0.5
+
+    # plot the bars with reduced height to increase spacing
+    bars = ax.barh(
+        weekly_distances.index,
+        weekly_distances.values,
+        height=bar_height,
+        color="#1f77b4",
+        edgecolor="black",
+    )
+
+    # add labels and title
+    ax.set_xlabel("Total Distance (km)")
+    ax.set_ylabel("Week Number")
+    ax.set_title("Total Running Distance per Week in 2024")
+    ax.set_yticks(weekly_distances.index)
+    ax.set_yticklabels([f"Week {int(week)}" for week in weekly_distances.index])
+    ax.grid(axis="x", linestyle="--", alpha=0.7)
+
+    # annotate each bar with the exact value, using a smaller font and boxed labels
+    for bar, distance in zip(bars, weekly_distances.values):
+        ax.text(
+            # positioning the text slightly outside the bar
+            bar.get_width() + 0.5,
+            bar.get_y() + bar.get_height() / 2,
+            f"{distance:.2f} km",
+            va="center",
+            fontsize=8,
+            fontweight="bold",
+            bbox=dict(facecolor="white", edgecolor="black", boxstyle="round,pad=0.3"),
+        )
+
+    # save the plot as a PNG file
+    save_plot(fig, "weekly_total_distances_spaced_bar_2024.png")
+    plt.show()
+
+
 def visualise_weekly_total_runs(df):
     """
     Visualise the total number of runs for each week in 2024.
@@ -260,6 +312,7 @@ def main():
     visualise_monthly_total_distances(df_2024)
     visualise_monthly_total_runs(df_2024)
     visualise_weekly_total_runs(df_2024)
+    visualise_weekly_total_distances_bar(df_2024)
 
 
 if __name__ == "__main__":
