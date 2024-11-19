@@ -291,6 +291,47 @@ def visualise_weekly_total_runs(df):
     save_plot(fig, "weekly_total_runs_2022.png")
     plt.show()
 
+def find_longest_run(df):
+    """
+    Identify the longest run based on distance.
+    """
+    return df.loc[df["distance_km"].idxmax()]
+
+
+def visualise_longest_run(longest_run):
+    """
+    Visualise the longest run as a bar chart.
+    """
+    # prepare data for visualization
+    distance = longest_run["distance_km"]
+    label = f"Longest Run ({longest_run['start_date'].strftime('%Y-%m-%d')})"
+
+    # create the bar chart
+    fig = plt.figure(figsize=(8, 5))
+    bar = plt.bar([label], [distance], color="#4caf50")
+
+    # annotate the bar with the exact distance
+    plt.text(
+        bar[0].get_x() + bar[0].get_width() / 2,
+        bar[0].get_height() + 0.2,
+        f"{distance:.2f} km",
+        ha="center",
+        va="top",
+        fontsize=12,
+        fontweight="bold",
+        color="white",
+        bbox=dict(facecolor="black", alpha=0.7, boxstyle="round,pad=0.3"),
+    )
+
+    # add labels and title
+    plt.ylabel("Distance (km)")
+    plt.title("Longest Run in 2022")
+    plt.grid(axis="y", linestyle="--", alpha=0.7)
+
+    # save the plot as a PNG file
+    save_plot(fig, "longest_run_2022.png")
+    plt.show()
+
 
 def main():
     file_path = "data/apple_health_workout_running_data.csv"
@@ -310,12 +351,18 @@ def main():
     average_distance = calculate_average_run_distance(df_2022)
     print(f"Average Distance per Run in 2022: {average_distance:.2f} km")
 
+    # find the longest run
+    longest_run = find_longest_run(df_2022)
+    print(f"Longest Run: {longest_run['distance_km']:.2f} km on {longest_run['start_date']}")
+
     # visualise the charts and save them as images
     visualise_average_run_distance(average_distance)
     visualise_monthly_total_distances(df_2022)
     visualise_monthly_total_runs(df_2022)
     visualise_weekly_total_runs(df_2022)
     visualise_weekly_total_distances_bar(df_2022)
+    visualise_longest_run(longest_run)
+
 
 
 if __name__ == "__main__":
