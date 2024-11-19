@@ -48,13 +48,13 @@ def calculate_average_run_distance(df):
 
 def save_plot(fig, filename):
     """
-    Save the current plot as a PNG file in the 'data_visualisations' directory.
+    Save the current plot as a PNG file in the 'data_visualisations/running/2024' directory.
     """
     # create the directory if it doesn't exist
-    os.makedirs("data_visualisations", exist_ok=True)
+    os.makedirs("data_visualisations/running/2024", exist_ok=True)
 
     # save the figure with the specified filename
-    file_path = os.path.join("data_visualisations", filename)
+    file_path = os.path.join("data_visualisations/running/2024", filename)
     fig.savefig(file_path)
     print(f"Saved plot as: {file_path}")
 
