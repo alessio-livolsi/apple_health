@@ -4,7 +4,6 @@ import os
 # PyPI
 import pandas as pd
 import matplotlib.pyplot as plt
-import matplotlib.ticker as ticker
 
 
 def load_running_data(file_path):
@@ -291,6 +290,7 @@ def visualise_weekly_total_runs(df):
     save_plot(fig, "weekly_total_runs_2022.png")
     plt.show()
 
+
 def find_longest_run(df):
     """
     Identify the longest run based on distance.
@@ -353,7 +353,9 @@ def main():
 
     # find the longest run
     longest_run = find_longest_run(df_2022)
-    print(f"Longest Run: {longest_run['distance_km']:.2f} km on {longest_run['start_date']}")
+    print(
+        f"Longest Run: {longest_run['distance_km']:.2f} km on {longest_run['start_date']}"
+    )
 
     # visualise the charts and save them as images
     visualise_average_run_distance(average_distance)
@@ -362,7 +364,6 @@ def main():
     visualise_weekly_total_runs(df_2022)
     visualise_weekly_total_distances_bar(df_2022)
     visualise_longest_run(longest_run)
-
 
 
 if __name__ == "__main__":
