@@ -194,10 +194,10 @@ def visualise_monthly_total_runs(df):
         height = bar.get_height()
         plt.text(
             bar.get_x() + bar.get_width() / 2,
-            height + 0.5,
+            height + 0.2,
             f"{int(height)} runs",
             ha="center",
-            va="bottom",
+            va="top",
             fontsize=10,
             fontweight="bold",
             color="white",
