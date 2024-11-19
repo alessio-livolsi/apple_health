@@ -5,6 +5,7 @@ import os
 import pandas as pd
 import matplotlib.pyplot as plt
 import matplotlib.ticker as ticker
+import seaborn as sns
 
 
 def load_running_data(file_path):
@@ -334,6 +335,52 @@ def visualise_longest_run(longest_run):
     plt.show()
 
 
+def visualise_run_frequency_heatmap(df):
+    """
+    Create a heatmap of run frequency by day of the week and hour of the day.
+    """
+    # extract day of the week and hour of the day
+    df["day_of_week"] = df["start_date"].dt.day_name()
+    df["hour_of_day"] = df["start_date"].dt.hour
+
+    # create a pivot table for the heatmap
+    heatmap_data = (
+        df.groupby(["day_of_week", "hour_of_day"]).size().unstack(fill_value=0)
+    )
+
+    # reorder the days of the week for better visualization
+    days_order = [
+        "Monday",
+        "Tuesday",
+        "Wednesday",
+        "Thursday",
+        "Friday",
+        "Saturday",
+        "Sunday",
+    ]
+    heatmap_data = heatmap_data.reindex(days_order)
+
+    # create the heatmap
+    plt.figure(figsize=(12, 8))
+    sns.heatmap(
+        heatmap_data,
+        cmap="Blues",
+        annot=True,
+        fmt="d",
+        linewidths=0.5,
+        cbar_kws={"label": "Number of Runs"},
+    )
+
+    # add labels and title
+    plt.title("Run Frequency by Day of Week and Hour of Day in 2024")
+    plt.xlabel("Hour of Day")
+    plt.ylabel("Day of Week")
+
+    # save the heatmap as a PNG file
+    save_plot(plt.gcf(), "run_frequency_heatmap_2024.png")
+    plt.show()
+
+
 def main():
     file_path = "data/apple_health_workout_running_data.csv"
 
@@ -354,7 +401,9 @@ def main():
 
     # find the longest run
     longest_run = find_longest_run(df_2024)
-    print(f"Longest Run: {longest_run['distance_km']:.2f} km on {longest_run['start_date']}")
+    print(
+        f"Longest Run: {longest_run['distance_km']:.2f} km on {longest_run['start_date']}"
+    )
 
     # visualise the charts and save them as images
     visualise_average_run_distance(average_distance)
@@ -363,6 +412,7 @@ def main():
     visualise_weekly_total_runs(df_2024)
     visualise_weekly_total_distances_bar(df_2024)
     visualise_longest_run(longest_run)
+    visualise_run_frequency_heatmap(df_2024)
 
 
 if __name__ == "__main__":
