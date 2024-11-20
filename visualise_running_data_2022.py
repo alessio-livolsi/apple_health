@@ -65,7 +65,7 @@ def visualise_average_run_distance(average_distance):
     fig = plt.figure(figsize=(6, 4))
 
     # plot a single bar showing the average distance
-    bar = plt.bar(["Average Distance"], [average_distance], color="#1f77b4")
+    plt.bar(["Average Distance"], [average_distance], color="#1f77b4")
 
     # add the exact value on top of the bar for clarity
     plt.text(
