@@ -338,6 +338,68 @@ def visualise_longest_run(longest_run):
     plt.show()
 
 
+def calculate_speed_and_filter(df):
+    """
+    Preprocess the data by adding speed and filtering valid runs.
+    """
+    df["distance_km"] = df["distance"].str.replace("km", "", regex=False).astype(float)
+    df["duration_hours"] = df["duration"].astype(float) / 60
+    df["speed_kmh"] = df["distance_km"] / df["duration_hours"]
+    return df
+
+
+def get_top_fastest_runs(df, standard_distance, tolerance=0.5, top_n=5):
+    """
+    Get the top N fastest runs for a given standard distance.
+    """
+    filtered_runs = df[
+        (df["distance_km"] >= standard_distance - tolerance)
+        & (df["distance_km"] <= standard_distance + tolerance)
+    ]
+    top_runs = filtered_runs.nlargest(top_n, "speed_kmh")[
+        ["start_date", "distance_km", "duration_hours", "speed_kmh"]
+    ]
+    return top_runs
+
+
+def visualise_top_fastest_runs(top_runs, distance):
+    """
+    Visualise the top fastest runs as a bar chart, with annotated speeds.
+    """
+    # prepare data for plotting
+    labels = top_runs["start_date"].dt.strftime("%d-%m-%Y")
+    speeds = top_runs["speed_kmh"]
+
+    # create the bar chart
+    plt.figure(figsize=(10, 6))
+    bars = plt.bar(labels, speeds, color="skyblue", edgecolor="black")
+
+    # add annotations for speeds on top of each bar
+    for bar, speed in zip(bars, speeds):
+        plt.text(
+            bar.get_x() + bar.get_width() / 2,
+            bar.get_height() + 0.1,
+            f"{speed:.2f} km/h",
+            ha="center",
+            va="bottom",
+            fontsize=10,
+            fontweight="bold",
+            bbox=dict(facecolor="white", edgecolor="black", boxstyle="round,pad=0.3"),
+        )
+
+    # add labels, title, and layout adjustments
+    plt.xlabel("Run Date")
+    plt.ylabel("Speed (km/h)")
+    plt.title(f"Top Five Fastest Runs for {distance}km in 2022")
+    plt.xticks(rotation=45)
+    plt.tight_layout()
+
+    # save the plot
+    filename = f"top_fastest_{distance}km_runs.png"
+    save_plot(plt.gcf(), filename)
+    plt.show()
+
+
 def main():
     file_path = "data/apple_health_workout_running_data.csv"
 
@@ -369,6 +431,15 @@ def main():
     visualise_weekly_total_runs(df_2022)
     visualise_weekly_total_distances_bar(df_2022)
     visualise_longest_run(longest_run)
+    visualise_longest_run(longest_run)
+
+    # calculate and visualise top fastest runs for standard distances
+    df_2022 = calculate_speed_and_filter(df_2022)
+    standard_distances = [5, 10]
+    for distance in standard_distances:
+        top_runs = get_top_fastest_runs(df_2022, standard_distance=distance)
+        print(f"Top {len(top_runs)} Fastest Runs for {distance}km:\n", top_runs)
+        visualise_top_fastest_runs(top_runs, distance)
 
 
 if __name__ == "__main__":
