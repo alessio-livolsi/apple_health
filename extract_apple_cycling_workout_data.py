@@ -161,4 +161,6 @@ def extract_cycling_workouts(xml_path, csv_path):
 
 
 if __name__ == "__main__":
-    extract_cycling_workouts("data/export.xml", "data/apple_health_cycling_workout_data.csv")
+    extract_cycling_workouts(
+        "data/export.xml", "data/apple_health_cycling_workout_data.csv"
+    )

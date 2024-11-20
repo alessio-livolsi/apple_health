@@ -431,9 +431,7 @@ def visualise_top_fastest_runs(top_runs, distance):
             va="bottom",
             fontsize=10,
             fontweight="bold",
-            bbox=dict(
-                facecolor="white", edgecolor="black", boxstyle="round,pad=0.3"
-            ),
+            bbox=dict(facecolor="white", edgecolor="black", boxstyle="round,pad=0.3"),
         )
 
     # add labels, title, and layout adjustments
