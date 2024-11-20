@@ -28,13 +28,12 @@ def preprocess_running_data(df):
     df["start_date"] = pd.to_datetime(df["start_date"], errors="coerce")
 
     # filter the DataFrame to include only rows where the year is 2024
-    df_2024 = df[df["start_date"].dt.year == 2024]
+    df_2024 = df[df["start_date"].dt.year == 2024].copy()
 
     # convert 'distance' column from string (e.g., '5.00km') to a numeric value (float)
     df_2024["distance_km"] = (
         df_2024["distance"].str.replace("km", "", regex=False).astype(float)
     )
-
     return df_2024
 
 
@@ -97,6 +96,9 @@ def visualise_monthly_total_distances(df):
     """
     Visualise the total running distance for each month in 2024.
     """
+
+    df = df.copy()
+
     # extract month from 'start_date' and create a new column
     df["month"] = df["start_date"].dt.month
 
@@ -213,6 +215,9 @@ def visualise_weekly_total_distances_bar(df):
     """
     Visualise the total running distance for each week in 2024 using a horizontal bar chart.
     """
+
+    df = df.copy()
+
     # extract the week number from 'start_date' and create a new column
     df["week"] = df["start_date"].dt.isocalendar().week
 

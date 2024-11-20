@@ -6,6 +6,7 @@ import pandas as pd
 import matplotlib.pyplot as plt
 import seaborn as sns
 
+
 def load_running_data(file_path):
     """
     Load the running data CSV file.
@@ -27,13 +28,12 @@ def preprocess_running_data(df):
     df["start_date"] = pd.to_datetime(df["start_date"], errors="coerce")
 
     # filter the DataFrame to include only rows where the year is 2023
-    df_2023 = df[df["start_date"].dt.year == 2023]
+    df_2023 = df[df["start_date"].dt.year == 2023].copy()
 
     # convert 'distance' column from string (e.g., '5.00km') to a numeric value (float)
     df_2023["distance_km"] = (
         df_2023["distance"].str.replace("km", "", regex=False).astype(float)
     )
-
     return df_2023
 
 
@@ -96,6 +96,9 @@ def visualise_monthly_total_distances(df):
     """
     Visualise the total running distance for each month in 2023.
     """
+
+    df = df.copy()
+
     # extract month from 'start_date' and create a new column
     df["month"] = df["start_date"].dt.month
 
@@ -212,6 +215,9 @@ def visualise_weekly_total_distances_bar(df):
     """
     Visualise the total running distance for each week in 2023 using a horizontal bar chart.
     """
+
+    df = df.copy()
+
     # extract the week number from 'start_date' and create a new column
     df["week"] = df["start_date"].dt.isocalendar().week
 
