@@ -442,7 +442,7 @@ def visualise_top_fastest_runs(top_runs, distance):
     plt.tight_layout()
 
     # save the plot
-    filename = f"top_fastest_{distance}km_runs.png"
+    filename = f"top_fastest_{distance}km_runs_2023.png"
     save_plot(plt.gcf(), filename)
     plt.show()
 
