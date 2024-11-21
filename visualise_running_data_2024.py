@@ -442,8 +442,115 @@ def visualise_top_fastest_runs(top_runs, distance):
     plt.tight_layout()
 
     # save the plot
-    filename = f"top_fastest_{distance}km_runs.png"
+    filename = f"top_fastest_{distance}km_runs_2024.png"
     save_plot(plt.gcf(), filename)
+    plt.show()
+
+
+def preprocess_form_data(df):
+    """
+    Preprocess the data to prepare stride length and vertical oscillation metrics.
+    """
+    # ensure relevant columns are numeric and handle missing data
+    df["stride_length_avg"] = pd.to_numeric(df["stride_length_avg"], errors="coerce")
+    df["vertical_oscillation_avg"] = pd.to_numeric(
+        df["vertical_oscillation_avg"], errors="coerce"
+    )
+    df["distance_km"] = df["distance"].str.replace("km", "", regex=False).astype(float)
+
+    # filter rows with valid stride length and vertical oscillation values
+    return df.dropna(
+        subset=["stride_length_avg", "vertical_oscillation_avg", "distance_km"]
+    )
+
+
+def analyse_form_trends(df):
+    """
+    Analyse trends in stride length and vertical oscillation with distance and terrain.
+    """
+    # group data by distance (rounded to nearest km)
+    df["distance_rounded"] = df["distance_km"].round()
+
+    # calculate average stride length and vertical oscillation for each distance group
+    trends = df.groupby("distance_rounded")[
+        ["stride_length_avg", "vertical_oscillation_avg"]
+    ].mean()
+    return trends
+
+
+def visualise_form_trends(trends):
+    """
+    Visualise trends in stride length and vertical oscillation with distance.
+    """
+    # plot stride length trend
+    plt.figure(figsize=(12, 6))
+    plt.plot(
+        trends.index,
+        trends["stride_length_avg"],
+        marker="o",
+        label="Stride Length (Avg)",
+        linestyle="--",
+    )
+    plt.title("Stride Length Trend by Distance in 2024")
+    plt.xlabel("Distance (km)")
+    plt.ylabel("Stride Length (cm)")
+    plt.grid(alpha=0.7)
+    plt.legend()
+    save_plot(plt.gcf(), "stride_length_trend_2024.png")
+    plt.show()
+
+    # plot vertical oscillation trend
+    plt.figure(figsize=(12, 6))
+    plt.plot(
+        trends.index,
+        trends["vertical_oscillation_avg"],
+        marker="o",
+        label="Vertical Oscillation (Avg)",
+        linestyle="--",
+    )
+    plt.title("Vertical Oscillation Trend by Distance in 2024")
+    plt.xlabel("Distance (km)")
+    plt.ylabel("Vertical Oscillation (cm)")
+    plt.grid(alpha=0.7)
+    plt.legend()
+    save_plot(plt.gcf(), "vertical_oscillation_trend_2024.png")
+    plt.show()
+
+
+def visualise_form_trends_outdoor(df):
+    """
+    Visualise trends for outdoor runs only.
+    """
+    # filter data for outdoor runs
+    outdoor_data = df[df["indoor"] == 0]
+
+    # analyse trends for outdoor data
+    trends = analyse_form_trends(outdoor_data)
+
+    # create the plot
+    plt.figure(figsize=(12, 6))
+    plt.plot(
+        trends.index,
+        trends["stride_length_avg"],
+        marker="o",
+        label="Stride Length (Avg)",
+        linestyle="--",
+        color="blue",
+    )
+    plt.plot(
+        trends.index,
+        trends["vertical_oscillation_avg"],
+        marker="o",
+        label="Vertical Oscillation (Avg)",
+        linestyle="--",
+        color="green",
+    )
+    plt.title("Form Trends by Distance - Outdoor Runs in 2024")
+    plt.xlabel("Distance (km)")
+    plt.ylabel("Average Metrics (cm)")
+    plt.grid(alpha=0.7)
+    plt.legend()
+    save_plot(plt.gcf(), "form_trends_outdoor_2024.png")
     plt.show()
 
 
@@ -471,6 +578,9 @@ def main():
         f"Longest Run: {longest_run['distance_km']:.2f} km on {longest_run['start_date']}"
     )
 
+    # preprocess data for running form analysis
+    df = preprocess_form_data(df)
+
     # visualise the charts and save them as images
     visualise_average_run_distance(average_distance)
     visualise_monthly_total_distances(df_2024)
@@ -479,6 +589,9 @@ def main():
     visualise_weekly_total_distances_bar(df_2024)
     visualise_run_frequency_heatmap(df_2024)
     visualise_longest_run(longest_run)
+    trends = analyse_form_trends(df)
+    visualise_form_trends(trends)
+    visualise_form_trends_outdoor(df)
 
     # calculate and visualise top fastest runs for standard distances
     df_2024 = calculate_speed_and_filter(df_2024)
