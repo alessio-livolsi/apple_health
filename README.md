@@ -1,4 +1,4 @@
-# Apple Health Workout Analysis
+# Apple Health Analysis
 
 This repository contains tools and scripts for extracting, processing, and visualising your workout data from Apple Health. It is specifically designed to analyse **running** workout data, helping you visualise trends and insights from your fitness workouts.
 
@@ -26,4 +26,3 @@ In the future, I plan to add similar visualisations for **cycling workouts** to 
 You can install the required packages using:
 ```bash
 pip install -r requirements.txt
-
